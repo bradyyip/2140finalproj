@@ -1,0 +1,6 @@
+#nuid\names 
+#name\dept\course number\instructor\seats\filled seats\day\time start\time end\credits\location
+
+002392262\Brady Yip
+Circuits and Signals\EECE\2150\instructor\30\4\9:15\11:15\5\Hayden Basement
+

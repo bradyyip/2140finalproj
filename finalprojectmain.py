@@ -21,32 +21,109 @@ def user_creation():
 
     return teach, nuid, name
 
+classes = [] #list to store all classes
 
-        
-#init list full of courses
-courses = [] #make each entry a dictionary with course info
+#read txt file that stores all classes
+def read_classes(classes):
+    classefile = open("classes.txt", "r")
+    readclass= classefile.readlines()
 
-#init a dictionary that holds registered courses and acts like a schedule
-registered_courses = { "M" : [], "T" : [], "W" : [], "R" : [], "F" : [] } #lists act as a schedule for each day of the week
+    #dont add any comments in the txt file to the classes list
+    for line in readclass:
 
-#function to add a course to the dictionary
-def add_course(teach_status):
-    #if the student is not a teacher, they cannot add courses
-    if teach_status == False:
-        return print("Students cannot add courses.")
-    
-    #input course info
-    course_name = input("Enter course name: ")
-    crn = input ("Enter course CRN: ")
-    days = input("Enter days the course meets (e.g., MWF, TR): ")
-    time = input("Enter time the course meets (e.g., 12:00-13:15): ")
-    seats = input("Enter number of available seats: ")
-    
-    #create course dictionary and add to courses list
-    courses.append({"name" : course_name, "CRN" : crn, "Days" : days, "Time" : time, "Seats" : seats})
+        #comments in txt file start with #
+        #read only lines that dont start with #
+        if not line.strip().startswith("#"):
+
+            #each part of the description is separated by a backslash
+            description = line.strip().split("\\")
+
+            class_info = {
+                "name": description[0],
+                "department": description[1],
+                "course_number": description[2],
+                "section": description[3],
+                "instructor": description[4],
+                "seats": int(description[5]),
+                "filled": int(description[6]),
+                "days": description[7],
+                "time_start": description[8],
+                "time_end": description[9],
+                "credits": int(description[10]),
+                "location": description[11]
+
+            }
+
+            #add class info to classes list
+            classes.append(class_info)
+
+    #close file
+    classefile.close()
+
+    return classes
+
+#function that allows user to find class
+def search(classes, search_term):
+
+    #list to store found classes
+    found_classes = []
+
+    #search for classes based on search type
+    for list_entry in classes:
+        for value in list_entry:
+            if value == search_term:
+                found_classes.append(list_entry)
+
+    return found_classes
+
+registered_classes = [] #list to store registered classes
+
+#function to add a class
+def add_class(nuid, classes, registered_classes):
+
+    #open file containing registrations
+    register_file = open("registrations.txt", "r")
+
+    #take all classes that the user is registered for and put 
+    #them in the registered_classes list
+    readregister = register_file.readlines()
+
+    for line in readregister:
+
+        #import class info from the registrations file for the user
+        if line[6:16] == nuid:
+            description = line.strip().split("\\")
+
+            class_info = {
+                "name": description[0],
+                "department": description[1],
+                "course_number": description[2],
+                "section": description[3],
+                "instructor": description[4],
+                "seats": int(description[5]),
+                "filled": int(description[6]),
+                "days": description[7],
+                "time_start": description[8],
+                "time_end": description[9],
+                "credits": int(description[10]),
+                "location": description[11]
+
+            }
+
+            registered_classes.append(class_info)
+    register_file.close()
+
+    #open registrations file in write mode
+    register_file = open("registrations.txt", "w")
+
+    #ask the user if they know the info of the class they want to add
+    search_term = input("Enter the name, department, course number, " \
+    "CRN, instructor, days, time_start, time_end, or location of the class" \
+    " you want to add: ")
+
+    found_classes = search(classes, search_term)
 
 
 
-
-
-user_creation()
+    #open registrations file in write mode
+    #register_file = open("registrations.txt", "w")
