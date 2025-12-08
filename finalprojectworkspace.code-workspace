@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../../Documents/Arduino/whynottft"
+		},
+		{
+			"name": "spitest2",
+			"path": "../../Documents/PlatformIO/Projects/spitest2"
+		},
+		{
+			"name": "spi test",
+			"path": "../../Documents/PlatformIO/Projects/spi test"
+		},
+		{
+			"name": "spitest real",
+			"path": "../../Documents/PlatformIO/Projects/spitest real"
+		}
+	],
+	"settings": {}
+}
