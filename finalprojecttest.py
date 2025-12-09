@@ -12,99 +12,7 @@ def search(classes, search_term):
 
     return found_classes
 
-# #function to add a class
-# def add_class(nuid, reg_class, classes, registered_classes):
-#     #open file containing registered classes
-#     register_file = open("registrations.txt", "w")
-
-#     #add the class to the file
-#     readregister
-
-
-
-# #function to look at classes
-# def register(nuid, classes, registered_classes):
-
-#     #open file containing registrations
-#     register_file = open("registrations.txt", "r")
-
-#     #take all classes that the user is registered for and put 
-#     #them in the registered_classes list
-#     readregister = register_file.readlines()
-
-#     for line in readregister:
-
-#         #import class info from the registrations file for the user
-#         if line[0:9] == nuid:   #find the nuid of the user
-
-#             #read the next lines
-#             for line in readregister:
-
-#                 #if the line is "*", break the loop
-#                 if line.strip() == "*":
-#                     break
-
-#                 #split the line into its components
-#                 desc = line.strip().split("\\")
-
-#                 class_info = {
-#                     "name": desc[0],   
-#                     "department": desc[1],
-#                     "course_number": desc[2],
-#                     "section": desc[3],
-#                     "instructor": desc[4],
-#                     "seats": int(desc[5]),
-#                     "filled": int(desc[6]),
-#                     "days": desc[7],
-#                     "time_start": desc[8],
-#                     "time_end": desc[9],
-#                     "credits": int(desc[10]),
-#                     "location": desc[11]
-#                 }
-
-#             registered_classes.append(class_info)
-#     register_file.close()
-
-#     #open registrations file in write mode
-#     register_file = open("registrations.txt", "w")
-
-#     #ask the user if they know the info of the class they want to add
-#     search_term = input("Enter the name, department, course number, " \
-#     "CRN, instructor, days, start time, end time, or location of the class" \
-#     " you want to add: ")
-
-#     #searches for classes based on user input
-#     found_classes = search(classes, search_term)
-
-#     #displays found classes to user
-#     print("Found Classes:\n") #print the header
-    
-#     #print 5 found classes
-#     print_count = 1
-#     for classes in found_classes:
-#         if print_count < 6:
-            
-#             #print class details
-#             print(f"{print_count}. {classes['department']} {classes['name']} \
-#             Starts: {classes['time_start']} Location: {classes['location']}")
-
-#             #label the printed class with a number
-#             printed_class = {print}
-
-#             print_count += 1
-
-#         #ask user to choose the course they want to look at or if they want to see more
-#         view_more = input("Choose a class to view or type 'more' to see more results: ")
-
-#         #if the user found the class they want to look at
-#         if view_more != "more":
-#             view_class = int(view_more)
-
-#         #reset print count to print 5 more
-#         if view_more == "more": 
-#             print("More Classes:\n") #print the header
-#             print_count = 1
-#         else 
+#function to read classes from file
 
 def read_classes(classes):
     classefile = open("classes.txt", "r")
@@ -127,7 +35,7 @@ def read_classes(classes):
                 "crn": description[3],
                 "instructor": description[4],
                 "seats": int(description[5]),
-                "filled": int(description[6]),
+                "filled seats": int(description[6]),
                 "days": description[7],
                 "time start": description[8],
                 "time end": description[9],
@@ -166,10 +74,12 @@ def add_class(nuid, reg_class, registered_classes):
 
     #find nuid
     for line in lines:
-        if line.strip() == nuid:
+        if line.strip() == str(nuid):
+
+            nuid_line = lines.index(line)
 
             #start of class lines
-            i = lines.index(line) + 1
+            i = nuid_line + 1
 
             #put lines into updated lines until "*" is found
             while i < len(lines) and lines[i].strip() != "*":
@@ -177,10 +87,10 @@ def add_class(nuid, reg_class, registered_classes):
                 i += 1
 
             #delete old class lines
-            del lines[lines.index(line)+1:i]
+            del lines[nuid_line+1:i]
 
             #put classes back into position 
-            position = lines.index(line) + 1
+            position = nuid_line + 1
             
             #insert new class lines
             for class_dic in registered_classes:
@@ -205,7 +115,7 @@ def add_class(nuid, reg_class, registered_classes):
 def register(nuid, classes, registered_classes):
 
     #open file containing registrations
-    register_file = open("registeredclasses.txt", "r")
+    register_file = open("registeredclass.txt", "r")
 
     #take all classes that the user is registered for and put 
     #them in the registered_classes list
@@ -214,7 +124,7 @@ def register(nuid, classes, registered_classes):
     for line in readregister:
 
         #import class info from the registrations file for the user
-        if line[0:9] == nuid:   #find the nuid of the user
+        if line[0:7] == str(nuid):   #find the nuid of the user
 
             #read the next lines
             for line in readregister:
@@ -247,48 +157,102 @@ def register(nuid, classes, registered_classes):
     #ask the user if they know the info of the class they want to add
     search_term = input("Enter the name, department, course number, " \
     "CRN, instructor, days, start time, end time, or location of the class" \
-    " you want to add: ")
+    " you want to add: \n")
 
-    #searches for classes based on user input
-    found_classes = search(classes, search_term)
+    #search loop
+    while True:
+        #variable that says whether or not classes are found
+        classes_found = False
 
-    #displays found classes to user
-    print("Found Classes:\n") #print the header
+        #search function
+        while classes_found == False: #until classes are found
+            found_classes = search(classes, search_term) #searches for classes based on user input
 
-    #label the printed class with a number
-    printed_class = {}
+            #if classes are found
+            if found_classes != []: #as long as the found classes list is not empty
+                classes_found = True
+            else: #if no classes are found
+                #tell the user search failed
+                print("No classes found matching that search term. Try again.\n")
 
-    #print 5 found classes
-    print_count = 1
-    for classes in found_classes:
-        if print_count < 6:
-            
-            #print class details
-            print(f"{print_count}. {classes['department']} {classes['name']} \
-            Starts: {classes['time_start']} Location: {classes['location']}")
+                #ask the user to enter a new search term
+                search_term = input("Enter the name, department, course number, " \
+                "CRN, instructor, days, start time, end time, or location of the class" \
+                " you want to add: \n")
 
-            #add the printed class to the dictionary
-            printed_class[print_count] = classes
 
-            print_count += 1
 
-        #ask user to choose the course they want to look at or if they want to see more
-        view_more = input("Choose a class to view or type 'more' to see more results: ")
+        #displays found classes to user
+        print("Found Classes:\n") #print the header
 
-        #if the user found the class they want to look at
-        if view_more != "more":
-            view_class = int(view_more)
+        #label the printed class with a number
+        printed_class = {}
 
-        #reset print count to print 5 more
-        if view_more == "more": 
-            print("More Classes:\n") #print the header
-            print_count = 1
-        else:
+        #print 5 found classes
+        print_count = 1
+
+        #class that user wants to ad
+        view_class = None
+
+        while True:
+            for classes_item in found_classes:
+                if print_count < 6:
+                    
+                    #print class details
+                    print(f"{print_count}. {classes_item['department']} {classes_item['course number']} {classes_item['name']} \
+                    Starts: {classes_item['time start']} Location: {classes_item['location']}")
+
+                    #add the printed class to the dictionary
+                    printed_class[print_count] = classes_item
+
+                    print_count += 1
+
+                #valid input check
+                    valid = False
+
+                while valid == False:
+
+                    valid = True
+
+                    #ask user to choose the course they want to look at or if they want to see more
+                    view_more = input("Type the # next to the class or type 'more' to see more results:"
+                    " or if you want to search again, type 'search': \n")
+
+                    
+
+                    #if the user found the class they want to look at
+                    if view_more != "more" and view_more != "search" and view_more.isdigit() == True: #if user typed a class number
+                        view_class = int(view_more)
+                    elif view_more != "more" and view_more != "search" and view_more.isdigit() == False: #if user typed something invalid
+                        print("Invalid input. Please try again.\n")
+
+                        valid = False #input is invalid, repeat loop
+                    
+
+                #reset print count to print 5 more
+                if view_more == "more": 
+                    print("More Classes:\n") #print the header
+                    print_count = 1
+                elif view_more == "search": #if the user wants to search again
+                    search_term = input("Enter the name, department, course number, " \
+                    "CRN, instructor, days, start time, end time, or location of the class" \
+                    " you want to add: \n")
+                    print_count = 1
+                    break
+
+                else:
+                    break
             break
 
-    add_class(nuid, printed_class[view_class], registered_classes)
+        if view_more != "search":
+            break  # Exit the outer while True loop
 
-    return print("Class added successfully!")
+    #if the user selected a class to add
+    if view_class != None:
+        add_class(nuid, printed_class[view_class], registered_classes)
+        print("Class added successfully!")
+
+    return 
 
             
 
@@ -298,7 +262,4 @@ classes = [] #list to store all classes
 
 read_classes(classes)
 
-
-
-
-
+register(2392262, classes, registered_classes)
