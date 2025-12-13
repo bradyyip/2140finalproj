@@ -1,0 +1,7 @@
+1000003
+!Jeff Lam
+#comment lines start with #
+#start with the nuid and each class gets appended to the bottom
+#line with name start with !
+Circuits and Signals\EECE\2150\15920\Gruer Nicol\30\0\MWR\9:15\11:15\5\Hayden 009A
+Computing Fundamentals for Engineers\EECE\2140\32781\Yanzhi Wang\40\0\MW\14:50\16:30\4\Hayden 009B

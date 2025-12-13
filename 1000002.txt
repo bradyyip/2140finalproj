@@ -1,0 +1,7 @@
+1000002
+!Brady Yip
+#comment lines start with #
+#start with the nuid and each class gets appended to the bottom
+#line with name start with !
+Differential Equations and Linear Algebra\MATH\2341\51234\Assad Fotovian\80\0\MWR\16:35\17:40\4\Shillman 325
+Computing Fundamentals for Engineers\EECE\2140\32781\Yanzhi Wang\40\0\MW\14:50\16:30\4\Hayden 009B

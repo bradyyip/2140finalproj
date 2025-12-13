@@ -1,19 +1,71 @@
-#function that allows user to find class
-def search(classes, search_term):
+#function to find all classes student is registered for
 
-    #list to store found classes
-    found_classes = []
+def read_registered_classes(nuid, registered_classes):
+#open file containing registrations
+    register_file = open("registeredclass.txt", "r")
 
-    #search for classes based on search type
-    for list_entry in classes: #for every class
-        for value in list_entry.values(): #for every class attribute
-            if search_term.lower() in str(value).lower(): #if the search term is in the attribute
-                found_classes.append(list_entry) #add the class to found classes
+    #take all classes that the user is registered for and put 
+    #them in the registered_classes list
+    readregister = register_file.readlines()
 
-    return found_classes
+    #track what line we are on
+    file_line = 0
+
+    while file_line < len(readregister):
+
+        current_line = readregister[file_line]
+
+        #import class info from the registrations file for the user
+        if current_line[0:7] == str(nuid):   #find the nuid of the user
+
+            #read the line after the nuid
+            next_line = file_line + 1
+
+            #read the next lines
+            while next_line < len(readregister):
+                class_line = readregister[next_line]
+
+                #if the line is "*", break the loop
+                if class_line.strip() == "*":
+                    break
+
+                #if the line is the nuid
+                elif class_line.strip() == str(nuid):
+                    next_line += 1
+                    continue
+
+                #split the line into its components
+                desc = class_line.strip().split("\\")
+                
+                class_info = {
+                    "name": desc[0],   
+                    "department": desc[1],
+                    "course number": desc[2],
+                    "crn": desc[3],
+                    "instructor": desc[4],
+                    "seats": int(desc[5]),
+                    "filled seats": int(desc[6]),
+                    "days": desc[7],
+                    "time start": desc[8],
+                    "time end": desc[9],
+                    "credits": int(desc[10]),
+                    "location": desc[11]
+                }
+                registered_classes.append(class_info)
+                
+                #update counter
+                next_line += 1
+
+            break
+
+        #update file line counter
+        file_line += 1
+
+    register_file.close()
+
+    return registered_classes
 
 #function to read classes from file
-
 def read_classes(classes):
     classefile = open("classes.txt", "r")
     readclass= classefile.readlines()
@@ -56,6 +108,7 @@ def read_classes(classes):
 
 #function to add a class
 def add_class(nuid, reg_class, registered_classes):
+    print("add func called")
 
     #add new class to registered classes list
     registered_classes.append(reg_class)
@@ -71,6 +124,9 @@ def add_class(nuid, reg_class, registered_classes):
 
     #updated lines to write back to the file
     updated_lines = [reg_class]
+
+    #open file to write updated registrations
+    register_file = open("registeredclass.txt", "w")
 
     #find nuid
     for line in lines:
@@ -113,46 +169,6 @@ def add_class(nuid, reg_class, registered_classes):
         
 #function to look at classes
 def register(nuid, classes, registered_classes):
-
-    #open file containing registrations
-    register_file = open("registeredclass.txt", "r")
-
-    #take all classes that the user is registered for and put 
-    #them in the registered_classes list
-    readregister = register_file.readlines()
-
-    for line in readregister:
-
-        #import class info from the registrations file for the user
-        if line[0:7] == str(nuid):   #find the nuid of the user
-
-            #read the next lines
-            for line in readregister:
-
-                #if the line is "*", break the loop
-                if line.strip() == "*":
-                    break
-
-                #split the line into its components
-                desc = line.strip().split("\\")
-
-                class_info = {
-                    "name": desc[0],   
-                    "department": desc[1],
-                    "course number": desc[2],
-                    "section": desc[3],
-                    "instructor": desc[4],
-                    "seats": int(desc[5]),
-                    "filled seats": int(desc[6]),
-                    "days": desc[7],
-                    "time start": desc[8],
-                    "time end": desc[9],
-                    "credits": int(desc[10]),
-                    "location": desc[11]
-                }
-
-            registered_classes.append(class_info)
-    register_file.close()
 
     #ask the user if they know the info of the class they want to add
     search_term = input("Enter the name, department, course number, " \
@@ -200,7 +216,7 @@ def register(nuid, classes, registered_classes):
                     
                     #print class details
                     print(f"{print_count}. {classes_item['department']} {classes_item['course number']} {classes_item['name']} \
-                    Starts: {classes_item['time start']} Location: {classes_item['location']}")
+                    {classes_item['days']}  {classes_item['time start']} - {classes_item['time end']} Location: {classes_item['location']}")
 
                     #add the printed class to the dictionary
                     printed_class[print_count] = classes_item
@@ -254,6 +270,19 @@ def register(nuid, classes, registered_classes):
 
     return 
 
+#function that allows user to find class
+def search(classes, search_term):
+
+    #list to store found classes
+    found_classes = []
+
+    #search for classes based on search type
+    for list_entry in classes: #for every class
+        for value in list_entry.values(): #for every class attribute
+            if search_term.lower() in str(value).lower(): #if the search term is in the attribute
+                found_classes.append(list_entry) #add the class to found classes
+
+    return found_classes
             
 
 registered_classes = [] #list to store registered classes
@@ -261,5 +290,7 @@ registered_classes = [] #list to store registered classes
 classes = [] #list to store all classes
 
 read_classes(classes)
+
+read_registered_classes(2392262, registered_classes)
 
 register(2392262, classes, registered_classes)
